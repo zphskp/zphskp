@@ -1,0 +1,7 @@
+{
+  "description": "A voice-based conversation buddy to help students practice English.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "name": "App"
+}

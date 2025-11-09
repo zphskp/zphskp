@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZPHS Conversation Buddy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --background-color: #f7f9fc;
+            --text-color: #333;
+            --light-text-color: #fff;
+            --card-background: #fff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --danger-color: #e74c3c;
+            --user-message-bg: #e9e9eb;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        #root {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .app-container {
+            background-color: var(--card-background);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        header {
+            width: 100%;
+        }
+        header h1 {
+            color: var(--primary-color);
+            margin: 0 0 5px 0;
+            font-size: 1.8rem;
+        }
+        header p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .transcript-container {
+            width: 100%;
+            height: 200px;
+            background-color: #f0f2f5;
+            border-radius: 12px;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .transcript-placeholder {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .transcript-placeholder svg {
+            width: 40px;
+            height: 40px;
+            fill: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .transcript-entry {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+        }
+
+        .transcript-entry .message-bubble {
+            padding: 10px 15px;
+            border-radius: 18px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+        
+        .transcript-entry .speaker-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #555;
+        }
+
+        .transcript-entry.user {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+        .transcript-entry.user .message-bubble {
+            background-color: var(--primary-color);
+            color: var(--light-text-color);
+            border-bottom-right-radius: 4px;
+        }
+        .transcript-entry.user .speaker-label {
+           color: var(--primary-color);
+        }
+
+        .transcript-entry.buddy {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+        .transcript-entry.buddy .message-bubble {
+            background-color: var(--user-message-bg);
+            color: var(--text-color);
+            border-bottom-left-radius: 4px;
+        }
+         .transcript-entry.buddy .speaker-label {
+           color: #666;
+        }
+
+
+        .mic-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            flex-shrink: 0;
+        }
+        .mic-button:hover {
+            transform: scale(1.05);
+        }
+        .mic-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .mic-button.active {
+            background-color: var(--danger-color);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+        .mic-button.listening {
+             animation: pulse 1.5s infinite;
+        }
+        .mic-button svg {
+            width: 50px;
+            height: 50px;
+            fill: var(--light-text-color);
+        }
+        .timer {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            min-height: 28px;
+            margin-bottom: -15px; /* Pull the mic button up slightly */
+        }
+        .status-text {
+            min-height: 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(74, 144, 226, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
+            }
+        }
+        .mic-button.active.listening {
+            background-color: var(--primary-color);
+            animation: pulse 1.5s infinite;
+        }
+
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0",
+    "preact/": "https://aistudiocdn.com/preact@^10.27.2/",
+    "preact": "https://aistudiocdn.com/preact@^10.27.2",
+    "htm/": "https://aistudiocdn.com/htm@^3.1.1/"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+</body>
+</html>
